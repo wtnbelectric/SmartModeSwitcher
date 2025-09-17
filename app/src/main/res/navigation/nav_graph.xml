@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/ruleListFragment">
+
+    <fragment
+        android:id="@+id/ruleListFragment"
+        android:name="com.example.smartmodeswitcher.ui.RuleListFragment"
+        android:label="ルール一覧">
+        <action
+            android:id="@+id/action_ruleListFragment_to_ruleEditFragment"
+            app:destination="@id/ruleEditFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/ruleEditFragment"
+        android:name="com.example.smartmodeswitcher.ui.RuleEditFragment"
+        android:label="ルール編集">
+        <action
+            android:id="@+id/action_ruleEditFragment_to_ruleListFragment"
+            app:destination="@id/ruleListFragment" />
+    </fragment>
+
+</navigation>
