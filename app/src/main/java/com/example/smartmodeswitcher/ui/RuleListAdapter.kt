@@ -21,8 +21,9 @@ class RuleListAdapter : ListAdapter<Rule, RuleListAdapter.RuleViewHolder>(DiffCa
 
     class RuleViewHolder(private val binding: ItemRuleBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(rule: Rule) {
-            binding.textViewTime.text = "${rule.startTime} - ${rule.endTime}"
-            binding.textViewMode.text = when (rule.mode) {
+            binding.textStartTime.text = "${rule.startTime}"
+            binding.textEndTime.text = " ${rule.endTime}"
+            binding.textMode.text = when (rule.mode) {
                 1 -> "通常"
                 2 -> "バイブ"
                 3 -> "サイレント"

@@ -8,6 +8,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import androidx.fragment.app.commit
 import com.example.smartmodeswitcher.ui.RuleEditFragment
+import com.example.smartmodeswitcher.ui.RuleListFragment
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

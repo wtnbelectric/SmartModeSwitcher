@@ -1,20 +1,20 @@
 package com.example.smartmodeswitcher.ui
 
 import android.app.TimePickerDialog
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.example.smartmodeswitcher.R
 import com.example.smartmodeswitcher.databinding.FragmentRuleEditBinding
-import java.util.*
+import com.example.smartmodeswitcher.data.AppDatabase
 import com.example.smartmodeswitcher.data.Rule
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import com.example.smartmodeswitcher.data.RuleRepository
+import com.example.smartmodeswitcher.ui.RuleListViewModelFactory
+import java.util.*
 
 class RuleEditFragment : Fragment() {
     private var _binding: FragmentRuleEditBinding? = null
@@ -27,6 +27,8 @@ class RuleEditFragment : Fragment() {
     private var endMinute = 0
     private var selectedMode = 1 // 1:通常, 2:バイブ, 3:サイレント
 
+    private lateinit var ruleListViewModel: RuleListViewModel
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -36,6 +38,12 @@ class RuleEditFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // ViewModelの初期化（Factoryを使う）
+        val db = AppDatabase.getInstance(requireContext().applicationContext)
+        val repository = RuleRepository(db.ruleDao())
+        val factory = RuleListViewModelFactory(repository)
+        ruleListViewModel = ViewModelProvider(this, factory)[RuleListViewModel::class.java]
 
         // 開始時間ボタン
         binding.buttonStartTime.setOnClickListener {
@@ -72,10 +80,13 @@ class RuleEditFragment : Fragment() {
                 endTime = String.format("%02d:%02d", endHour, endMinute),
                 mode = selectedMode
             )
+            // ルールをDBに保存
+            ruleListViewModel.insert(rule)
             Toast.makeText(requireContext(), "ルールを保存しました", Toast.LENGTH_SHORT).show()
-            val intent = Intent(android.provider.Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
-            startActivity(intent)
-            requireActivity().onBackPressedDispatcher.onBackPressed()
+            // ルール一覧画面に明示的に遷移
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, com.example.smartmodeswitcher.ui.RuleListFragment())
+                .commit()
         }
 
         // キャンセルボタン

@@ -1,13 +1,16 @@
 package com.example.smartmodeswitcher.ui
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.LiveData
+import androidx.lifecycle.*
 import com.example.smartmodeswitcher.data.Rule
 import com.example.smartmodeswitcher.data.RuleRepository
+import kotlinx.coroutines.launch
 
 class RuleListViewModel(private val repository: RuleRepository) : ViewModel() {
-    val allRules: LiveData<List<Rule>> = repository.allRules
+    val allRules = repository.allRules
+
+    fun insert(rule: Rule) = viewModelScope.launch {
+        repository.insert(rule)
+    }
 }
 
 class RuleListViewModelFactory(private val repository: RuleRepository) : ViewModelProvider.Factory {

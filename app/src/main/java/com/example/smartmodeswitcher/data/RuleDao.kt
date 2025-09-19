@@ -8,8 +8,8 @@ interface RuleDao {
     @Query("SELECT * FROM rules")
     fun getAll(): LiveData<List<Rule>>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(rule: Rule): Long
+    @Insert
+    suspend fun insert(rule: Rule)
 
     @Update
     suspend fun update(rule: Rule)
