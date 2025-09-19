@@ -31,6 +31,12 @@ class RuleListAdapter : ListAdapter<Rule, RuleListAdapter.RuleViewHolder>(DiffCa
             }
             binding.switchEnabled.isChecked = rule.enabled
             // 編集・削除ボタンのリスナーもここで設定
+
+            val daysMap = listOf("日", "月", "火", "水", "木", "金", "土")
+            val daysStr = rule.days
+                .mapIndexedNotNull { i: Int, c: Char -> if (c == '1') daysMap[i] else null }
+                .joinToString("")
+            binding.textDays.text = if (daysStr.isNotEmpty()) daysStr else "指定なし"
         }
     }
 

@@ -75,9 +75,21 @@ class RuleEditFragment : Fragment() {
 
         // 保存ボタン
         binding.buttonSave.setOnClickListener {
+            // 曜日チェックボックスの状態を"0111110"形式で取得
+            val days = buildString {
+                append(if (binding.checkSun.isChecked) "1" else "0")
+                append(if (binding.checkMon.isChecked) "1" else "0")
+                append(if (binding.checkTue.isChecked) "1" else "0")
+                append(if (binding.checkWed.isChecked) "1" else "0")
+                append(if (binding.checkThu.isChecked) "1" else "0")
+                append(if (binding.checkFri.isChecked) "1" else "0")
+                append(if (binding.checkSat.isChecked) "1" else "0")
+            }
+
             val rule = Rule(
                 startTime = String.format("%02d:%02d", startHour, startMinute),
                 endTime = String.format("%02d:%02d", endHour, endMinute),
+                days = days,
                 mode = selectedMode
             )
             // ルールをDBに保存
