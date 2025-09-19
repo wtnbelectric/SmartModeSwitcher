@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">SmartModeSwitcher</string>
+    <string name="add_rule">ルール追加</string>
 </resources>

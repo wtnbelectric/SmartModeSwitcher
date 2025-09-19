@@ -9,7 +9,7 @@
         android:name="com.example.smartmodeswitcher.ui.RuleListFragment"
         android:label="ルール一覧">
         <action
-            android:id="@+id/action_ruleListFragment_to_ruleEditFragment"
+            android:id="@+id/action_ruleList_to_ruleEdit"
             app:destination="@id/ruleEditFragment" />
     </fragment>
 
