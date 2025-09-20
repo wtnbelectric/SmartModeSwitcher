@@ -8,18 +8,17 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.RecyclerView
+import com.example.smartmodeswitcher.R
+import com.example.smartmodeswitcher.data.AppDatabase
+import com.example.smartmodeswitcher.data.RuleRepository
 import com.google.android.material.datepicker.MaterialDatePicker
 import java.text.SimpleDateFormat
 import java.util.*
 import java.time.Instant
-import java.time.LocalDate
 import java.time.ZoneId
-
-// ViewModelのimport（別途作成が必要）
 import com.example.smartmodeswitcher.ui.DashboardViewModel
-
-import com.example.smartmodeswitcher.data.AppDatabase
-import com.example.smartmodeswitcher.data.RuleRepository
+import com.example.smartmodeswitcher.ui.RuleAdapter
 
 class DashboardFragment : Fragment() {
     private var selectedDate: Long = MaterialDatePicker.todayInUtcMilliseconds()
@@ -38,6 +37,14 @@ class DashboardFragment : Fragment() {
         )
         val buttonPickDate = root.findViewById<Button>(com.example.smartmodeswitcher.R.id.buttonPickDate)
         val textSelectedDate = root.findViewById<TextView>(com.example.smartmodeswitcher.R.id.textSelectedDate)
+
+        val recyclerView = root.findViewById<RecyclerView>(R.id.recyclerViewRules)
+        val adapter = RuleAdapter(emptyList())
+        recyclerView.adapter = adapter
+
+        viewModel.rules.observe(viewLifecycleOwner) { rules ->
+            adapter.submitList(rules)
+        }
 
         textSelectedDate.text = formatDate(selectedDate)
 

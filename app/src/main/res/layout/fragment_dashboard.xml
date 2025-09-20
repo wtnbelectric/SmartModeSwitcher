@@ -20,6 +20,14 @@
         android:textSize="18sp"
         android:layout_marginTop="16dp" />
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewRules"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="24dp"
+        android:contentDescription="ルール一覧" />
+
     <!-- Step5以降でガントチャート等をここに追加 -->
 
 </LinearLayout>
