@@ -32,22 +32,21 @@ class DashboardFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
-        val root = inflater.inflate(
-            com.example.smartmodeswitcher.R.layout.fragment_dashboard, container, false
-        )
-        val buttonPickDate = root.findViewById<Button>(com.example.smartmodeswitcher.R.id.buttonPickDate)
-        val textSelectedDate = root.findViewById<TextView>(com.example.smartmodeswitcher.R.id.textSelectedDate)
+        val root = inflater.inflate(R.layout.fragment_dashboard, container, false)
+        val buttonPickDate = root.findViewById<Button>(R.id.buttonPickDate)
+        val textSelectedDate = root.findViewById<TextView>(R.id.textSelectedDate)
 
+        // RecyclerViewとアダプタのセット
         val recyclerView = root.findViewById<RecyclerView>(R.id.recyclerViewRules)
         val adapter = RuleAdapter(emptyList())
         recyclerView.adapter = adapter
 
+        // 1. LiveData監視
         viewModel.rules.observe(viewLifecycleOwner) { rules ->
             adapter.submitList(rules)
         }
 
-        textSelectedDate.text = formatDate(selectedDate)
-
+        // 2. 日付選択ボタンのリスナー
         buttonPickDate.setOnClickListener {
             val picker = MaterialDatePicker.Builder.datePicker()
                 .setTitleText("日付を選択")
@@ -56,7 +55,7 @@ class DashboardFragment : Fragment() {
             picker.addOnPositiveButtonClickListener { dateMillis ->
                 selectedDate = dateMillis
                 textSelectedDate.text = formatDate(selectedDate)
-                // ミリ秒からLocalDateを生成してViewModelに渡す
+                // 3. 日付選択後のViewModel呼び出し
                 val localDate = Instant.ofEpochMilli(selectedDate)
                     .atZone(ZoneId.systemDefault())
                     .toLocalDate()
