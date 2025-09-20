@@ -50,6 +50,22 @@ class RuleListFragment : Fragment(), RuleListAdapter.OnRuleActionListener {
         viewModel.allRules.observe(viewLifecycleOwner) { rules ->
             adapter.submitList(rules)
         }
+
+        binding.fabAdd.setOnClickListener {
+            // ルール追加画面へ遷移
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(com.example.smartmodeswitcher.R.id.fragment_container, RuleEditFragment())
+                .addToBackStack(null)
+                .commit()
+        }
+
+        binding.buttonDashboard.setOnClickListener {
+            // DashboardFragmentが未実装の場合はコメントアウトしておいてください
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(com.example.smartmodeswitcher.R.id.fragment_container, DashboardFragment())
+                .addToBackStack(null)
+                .commit()
+        }
     }
 
     override fun onDestroyView() {

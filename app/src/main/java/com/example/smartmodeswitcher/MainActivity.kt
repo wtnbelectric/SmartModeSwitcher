@@ -5,9 +5,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import androidx.fragment.app.commit
-import com.example.smartmodeswitcher.ui.RuleEditFragment
 import com.example.smartmodeswitcher.ui.RuleListFragment
 
 class MainActivity : AppCompatActivity() {
@@ -18,13 +16,6 @@ class MainActivity : AppCompatActivity() {
             supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, RuleListFragment())
                 .commit()
-        }
-
-        findViewById<FloatingActionButton>(R.id.fab_add_rule).setOnClickListener {
-            supportFragmentManager.commit {
-                replace(R.id.fragment_container, RuleEditFragment())
-                addToBackStack(null)
-            }
         }
     }
 }
