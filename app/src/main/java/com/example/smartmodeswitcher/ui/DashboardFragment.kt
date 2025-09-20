@@ -7,24 +7,38 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.google.android.material.datepicker.MaterialDatePicker
 import java.text.SimpleDateFormat
 import java.util.*
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
+
+// ViewModelのimport（別途作成が必要）
+import com.example.smartmodeswitcher.ui.DashboardViewModel
+
+import com.example.smartmodeswitcher.data.AppDatabase
+import com.example.smartmodeswitcher.data.RuleRepository
 
 class DashboardFragment : Fragment() {
     private var selectedDate: Long = MaterialDatePicker.todayInUtcMilliseconds()
 
+    // DB, Repository, Factoryの初期化
+    private val db by lazy { AppDatabase.getInstance(requireContext().applicationContext) }
+    private val repository by lazy { RuleRepository(db.ruleDao()) }
+    private val factory by lazy { DashboardViewModelFactory(repository) }
+    private val viewModel: DashboardViewModel by viewModels { factory }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
-        // シンプルなレイアウトをコードで生成
         val root = inflater.inflate(
             com.example.smartmodeswitcher.R.layout.fragment_dashboard, container, false
         )
         val buttonPickDate = root.findViewById<Button>(com.example.smartmodeswitcher.R.id.buttonPickDate)
         val textSelectedDate = root.findViewById<TextView>(com.example.smartmodeswitcher.R.id.textSelectedDate)
 
-        // 初期表示
         textSelectedDate.text = formatDate(selectedDate)
 
         buttonPickDate.setOnClickListener {
@@ -35,7 +49,11 @@ class DashboardFragment : Fragment() {
             picker.addOnPositiveButtonClickListener { dateMillis ->
                 selectedDate = dateMillis
                 textSelectedDate.text = formatDate(selectedDate)
-                // ここで選択日付に応じたルール表示処理を呼び出す
+                // ミリ秒からLocalDateを生成してViewModelに渡す
+                val localDate = Instant.ofEpochMilli(selectedDate)
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate()
+                viewModel.loadRulesForDate(localDate)
             }
             picker.show(parentFragmentManager, "date_picker")
         }

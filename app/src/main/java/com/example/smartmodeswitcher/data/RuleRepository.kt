@@ -16,4 +16,8 @@ class RuleRepository(private val ruleDao: RuleDao) {
     suspend fun delete(rule: Rule) {
         ruleDao.delete(rule)
     }
+
+    suspend fun getRulesByDayOfWeek(dayOfWeek: Int): List<Rule> {
+        return ruleDao.getRulesByDayOfWeek(dayOfWeek)
+    }
 }

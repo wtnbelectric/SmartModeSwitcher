@@ -16,4 +16,8 @@ interface RuleDao {
 
     @Delete
     suspend fun delete(rule: Rule)
+
+    // RuleDao.kt
+    @Query("SELECT * FROM rules WHERE dayOfWeek = :dayOfWeek")
+    suspend fun getRulesByDayOfWeek(dayOfWeek: Int): List<Rule>
 }

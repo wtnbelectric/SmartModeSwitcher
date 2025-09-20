@@ -134,6 +134,7 @@ class RuleEditFragment : Fragment() {
             val latitude = latitudeText.takeIf { it.isNotEmpty() }?.toDoubleOrNull()
             val longitude = longitudeText.takeIf { it.isNotEmpty() }?.toDoubleOrNull()
             val radius = radiusText.takeIf { it.isNotEmpty() }?.toIntOrNull()
+            val dayOfWeek = days.indexOf('1') // 例: "0100000"なら1（＝月曜）
 
             val rule = Rule(
                 id = editingRuleId ?: 0,
@@ -143,7 +144,8 @@ class RuleEditFragment : Fragment() {
                 mode = selectedMode,
                 latitude = latitude,
                 longitude = longitude,
-                radius = radius
+                radius = radius,
+                dayOfWeek = dayOfWeek
             )
             if (editingRuleId != null) {
                 ruleListViewModel.update(rule)

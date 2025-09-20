@@ -9,6 +9,7 @@ data class Rule(
     val enabled: Boolean = true,
     val startTime: String,
     val endTime: String,
+    val dayOfWeek: Int, // 追加
     val latitude: Double? = null,
     val longitude: Double? = null,
     val radius: Int? = null,
