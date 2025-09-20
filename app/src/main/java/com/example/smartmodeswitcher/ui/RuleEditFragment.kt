@@ -77,6 +77,10 @@ class RuleEditFragment : Fragment() {
                         binding.checkFri.isChecked = rule.days[5] == '1'
                         binding.checkSat.isChecked = rule.days[6] == '1'
                     }
+                    // 位置情報
+                    binding.editLatitude.setText(rule.latitude?.toString())
+                    binding.editLongitude.setText(rule.longitude?.toString())
+                    binding.editRadius.setText(rule.radius?.toString())
                 }
             }
         }
@@ -109,7 +113,7 @@ class RuleEditFragment : Fragment() {
             }
         }
 
-        // 保存ボタン
+        // 保存ボタン押下時
         binding.buttonSave.setOnClickListener {
             // 曜日チェックボックスの状態を"0111110"形式で取得
             val days = buildString {
@@ -122,12 +126,24 @@ class RuleEditFragment : Fragment() {
                 append(if (binding.checkSat.isChecked) "1" else "0")
             }
 
+            // 位置情報入力値の取得
+            val latitudeText = binding.editLatitude.text.toString().trim()
+            val longitudeText = binding.editLongitude.text.toString().trim()
+            val radiusText = binding.editRadius.text.toString().trim()
+
+            val latitude = latitudeText.takeIf { it.isNotEmpty() }?.toDoubleOrNull()
+            val longitude = longitudeText.takeIf { it.isNotEmpty() }?.toDoubleOrNull()
+            val radius = radiusText.takeIf { it.isNotEmpty() }?.toIntOrNull()
+
             val rule = Rule(
                 id = editingRuleId ?: 0,
                 startTime = String.format("%02d:%02d", startHour, startMinute),
                 endTime = String.format("%02d:%02d", endHour, endMinute),
                 days = days,
-                mode = selectedMode
+                mode = selectedMode,
+                latitude = latitude,
+                longitude = longitude,
+                radius = radius
             )
             if (editingRuleId != null) {
                 ruleListViewModel.update(rule)

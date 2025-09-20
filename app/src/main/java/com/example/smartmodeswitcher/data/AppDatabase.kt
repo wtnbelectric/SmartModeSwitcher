@@ -26,3 +26,5 @@ abstract class AppDatabase : RoomDatabase() {
         }
     }
 }
+
+// 既存のRuleエンティティにlatitude/longitude/radiusが含まれていれば、追加のマイグレーションは不要です。

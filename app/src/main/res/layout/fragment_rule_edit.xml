@@ -90,6 +90,54 @@
             android:text="土" />
     </LinearLayout>
 
+    <!-- 位置情報入力欄（曜日とモードの間に配置） -->
+    <TextView
+        android:id="@+id/textViewLocationLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="位置情報（任意）"
+        android:textStyle="bold"
+        android:paddingTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/layout_days"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="8dp"/>
+
+    <EditText
+        android:id="@+id/editLatitude"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="緯度（例: 35.6895）"
+        android:inputType="numberDecimal"
+        android:maxLines="1"
+        app:layout_constraintTop_toBottomOf="@id/textViewLocationLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="4dp"/>
+
+    <EditText
+        android:id="@+id/editLongitude"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="経度（例: 139.6917）"
+        android:inputType="numberDecimal"
+        android:maxLines="1"
+        app:layout_constraintTop_toBottomOf="@id/editLatitude"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="4dp"/>
+
+    <EditText
+        android:id="@+id/editRadius"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="半径（m, 例: 100）"
+        android:inputType="number"
+        android:maxLines="1"
+        app:layout_constraintTop_toBottomOf="@id/editLongitude"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="4dp"/>
+
     <TextView
         android:id="@+id/textViewModeLabel"
         android:layout_width="wrap_content"
@@ -97,7 +145,8 @@
         android:text="モード"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/layout_days" />
+        app:layout_constraintTop_toBottomOf="@id/editRadius"
+        android:layout_marginTop="16dp"/>
 
     <RadioGroup
         android:id="@+id/radioGroupMode"
@@ -149,4 +198,5 @@
             android:layout_weight="1"
             android:text="キャンセル" />
     </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

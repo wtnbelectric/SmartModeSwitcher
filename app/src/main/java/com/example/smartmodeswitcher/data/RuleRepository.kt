@@ -1,12 +1,19 @@
 package com.example.smartmodeswitcher.data
 
-class RuleRepository(private val dao: RuleDao) {
-    val allRules = dao.getAll()
+import androidx.lifecycle.LiveData
+
+class RuleRepository(private val ruleDao: RuleDao) {
+    val allRules: LiveData<List<Rule>> = ruleDao.getAll()
 
     suspend fun insert(rule: Rule) {
-        dao.insert(rule)
+        ruleDao.insert(rule)
     }
 
-    suspend fun update(rule: Rule) = dao.update(rule)
-    suspend fun delete(rule: Rule) = dao.delete(rule)
+    suspend fun update(rule: Rule) {
+        ruleDao.update(rule)
+    }
+
+    suspend fun delete(rule: Rule) {
+        ruleDao.delete(rule)
+    }
 }

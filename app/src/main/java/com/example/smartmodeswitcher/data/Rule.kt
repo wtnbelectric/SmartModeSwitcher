@@ -9,9 +9,9 @@ data class Rule(
     val enabled: Boolean = true,
     val startTime: String,
     val endTime: String,
-    val days: String, // "0111110"（日〜土、1:有効, 0:無効）
     val latitude: Double? = null,
     val longitude: Double? = null,
     val radius: Int? = null,
-    val mode: Int
+    val mode: Int,
+    val days: String = "1111111" // 曜日管理（フェーズ1で追加済み想定）
 )

@@ -8,7 +8,7 @@ interface RuleDao {
     @Query("SELECT * FROM rules")
     fun getAll(): LiveData<List<Rule>>
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(rule: Rule)
 
     @Update
