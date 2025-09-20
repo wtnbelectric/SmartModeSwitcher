@@ -11,6 +11,14 @@ class RuleListViewModel(private val repository: RuleRepository) : ViewModel() {
     fun insert(rule: Rule) = viewModelScope.launch {
         repository.insert(rule)
     }
+
+    fun delete(rule: Rule) = viewModelScope.launch {
+        repository.delete(rule)
+    }
+
+    fun update(rule: Rule) = viewModelScope.launch {
+        repository.update(rule)
+    }
 }
 
 class RuleListViewModelFactory(private val repository: RuleRepository) : ViewModelProvider.Factory {

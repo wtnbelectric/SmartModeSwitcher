@@ -8,7 +8,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.smartmodeswitcher.data.Rule
 import com.example.smartmodeswitcher.databinding.ItemRuleBinding
 
-class RuleListAdapter : ListAdapter<Rule, RuleListAdapter.RuleViewHolder>(DiffCallback) {
+class RuleListAdapter(
+    private val onRuleActionListener: OnRuleActionListener
+) : ListAdapter<Rule, RuleListAdapter.RuleViewHolder>(DiffCallback) {
+
+    interface OnRuleActionListener {
+        fun onEditRule(rule: Rule)
+        fun onDeleteRule(rule: Rule)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RuleViewHolder {
         val binding = ItemRuleBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -19,7 +26,22 @@ class RuleListAdapter : ListAdapter<Rule, RuleListAdapter.RuleViewHolder>(DiffCa
         holder.bind(getItem(position))
     }
 
-    class RuleViewHolder(private val binding: ItemRuleBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class RuleViewHolder(private val binding: ItemRuleBinding) : RecyclerView.ViewHolder(binding.root) {
+        init {
+            binding.buttonEdit.setOnClickListener {
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    onRuleActionListener.onEditRule(getItem(position))
+                }
+            }
+            
+            binding.buttonDelete.setOnClickListener {
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    onRuleActionListener.onDeleteRule(getItem(position))
+                }
+            }
+        }
         fun bind(rule: Rule) {
             binding.textStartTime.text = "${rule.startTime}"
             binding.textEndTime.text = " ${rule.endTime}"

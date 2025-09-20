@@ -29,6 +29,9 @@ class RuleEditFragment : Fragment() {
 
     private lateinit var ruleListViewModel: RuleListViewModel
 
+    // 編集中のルールID
+    private var editingRuleId: Int? = null
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -44,6 +47,39 @@ class RuleEditFragment : Fragment() {
         val repository = RuleRepository(db.ruleDao())
         val factory = RuleListViewModelFactory(repository)
         ruleListViewModel = ViewModelProvider(this, factory)[RuleListViewModel::class.java]
+
+        // 編集モード判定
+        editingRuleId = arguments?.getInt("rule_id")
+        if (editingRuleId != null) {
+            // 既存ルールを取得してUIに反映
+            ruleListViewModel.allRules.observe(viewLifecycleOwner) { rules ->
+                val rule = rules.find { it.id == editingRuleId }
+                if (rule != null) {
+                    startHour = rule.startTime.substringBefore(":").toInt()
+                    startMinute = rule.startTime.substringAfter(":").toInt()
+                    endHour = rule.endTime.substringBefore(":").toInt()
+                    endMinute = rule.endTime.substringAfter(":").toInt()
+                    binding.buttonStartTime.text = rule.startTime
+                    binding.buttonEndTime.text = rule.endTime
+                    selectedMode = rule.mode
+                    when (rule.mode) {
+                        1 -> binding.radioButtonNormal.isChecked = true
+                        2 -> binding.radioButtonVibrate.isChecked = true
+                        3 -> binding.radioButtonSilent.isChecked = true
+                    }
+                    // 曜日
+                    if (rule.days.length == 7) {
+                        binding.checkSun.isChecked = rule.days[0] == '1'
+                        binding.checkMon.isChecked = rule.days[1] == '1'
+                        binding.checkTue.isChecked = rule.days[2] == '1'
+                        binding.checkWed.isChecked = rule.days[3] == '1'
+                        binding.checkThu.isChecked = rule.days[4] == '1'
+                        binding.checkFri.isChecked = rule.days[5] == '1'
+                        binding.checkSat.isChecked = rule.days[6] == '1'
+                    }
+                }
+            }
+        }
 
         // 開始時間ボタン
         binding.buttonStartTime.setOnClickListener {
@@ -87,14 +123,19 @@ class RuleEditFragment : Fragment() {
             }
 
             val rule = Rule(
+                id = editingRuleId ?: 0,
                 startTime = String.format("%02d:%02d", startHour, startMinute),
                 endTime = String.format("%02d:%02d", endHour, endMinute),
                 days = days,
                 mode = selectedMode
             )
-            // ルールをDBに保存
-            ruleListViewModel.insert(rule)
-            Toast.makeText(requireContext(), "ルールを保存しました", Toast.LENGTH_SHORT).show()
+            if (editingRuleId != null) {
+                ruleListViewModel.update(rule)
+                Toast.makeText(requireContext(), "ルールを更新しました", Toast.LENGTH_SHORT).show()
+            } else {
+                ruleListViewModel.insert(rule)
+                Toast.makeText(requireContext(), "ルールを保存しました", Toast.LENGTH_SHORT).show()
+            }
             // ルール一覧画面に明示的に遷移
             requireActivity().supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, com.example.smartmodeswitcher.ui.RuleListFragment())

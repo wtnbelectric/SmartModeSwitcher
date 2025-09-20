@@ -1,6 +1,5 @@
 package com.example.smartmodeswitcher.ui
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,10 +8,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.smartmodeswitcher.data.AppDatabase
+import com.example.smartmodeswitcher.data.Rule
 import com.example.smartmodeswitcher.data.RuleRepository
 import com.example.smartmodeswitcher.databinding.FragmentRuleListBinding
 
-class RuleListFragment : Fragment() {
+class RuleListFragment : Fragment(), RuleListAdapter.OnRuleActionListener {
     private var _binding: FragmentRuleListBinding? = null
     private val binding get() = _binding!!
 
@@ -20,6 +20,8 @@ class RuleListFragment : Fragment() {
     private val viewModel: RuleListViewModel by viewModels {
         RuleListViewModelFactory(repository)
     }
+    
+    private lateinit var adapter: RuleListAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,8 +40,10 @@ class RuleListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         // repositoryの初期化はDIやApplicationクラス経由で行うのが推奨
-
-        val adapter = RuleListAdapter()
+        
+        // Set up RecyclerView
+        adapter = RuleListAdapter(this)
+        binding.recyclerView.adapter = adapter
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.adapter = adapter
 
@@ -51,5 +55,14 @@ class RuleListFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+    
+    override fun onEditRule(rule: Rule) {
+        // Navigate to edit fragment with the rule
+        // You'll need to implement this navigation
+    }
+    
+    override fun onDeleteRule(rule: Rule) {
+        viewModel.delete(rule)
     }
 }
