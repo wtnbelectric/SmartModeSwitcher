@@ -58,8 +58,16 @@ class RuleListFragment : Fragment(), RuleListAdapter.OnRuleActionListener {
     }
     
     override fun onEditRule(rule: Rule) {
-        // Navigate to edit fragment with the rule
-        // You'll need to implement this navigation
+        // ルール編集画面へ遷移（編集対象のRuleをBundleで渡す）
+        val fragment = RuleEditFragment().apply {
+            arguments = Bundle().apply {
+                putInt("rule_id", rule.id)
+            }
+        }
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(com.example.smartmodeswitcher.R.id.fragment_container, fragment)
+            .addToBackStack(null)
+            .commit()
     }
     
     override fun onDeleteRule(rule: Rule) {
