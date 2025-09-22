@@ -20,6 +20,9 @@ import java.time.ZoneId
 import com.example.smartmodeswitcher.ui.DashboardViewModel
 import com.example.smartmodeswitcher.ui.RuleAdapter
 import java.time.LocalDate
+import android.widget.FrameLayout
+import android.util.TypedValue
+import android.graphics.Color
 
 class DashboardFragment : Fragment() {
     private var selectedDate: Long = MaterialDatePicker.todayInUtcMilliseconds()
@@ -29,6 +32,8 @@ class DashboardFragment : Fragment() {
     private val repository by lazy { RuleRepository(db.ruleDao()) }
     private val factory by lazy { DashboardViewModelFactory(repository) }
     private val viewModel: DashboardViewModel by viewModels { factory }
+
+    private lateinit var ganttChartView: GanttChartView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -43,9 +48,19 @@ class DashboardFragment : Fragment() {
         recyclerView.adapter = adapter
         recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(requireContext())
 
+        // ガントチャートViewのセットアップ
+        val ganttContainer = root.findViewById<FrameLayout>(R.id.ganttChartContainer)
+        ganttChartView = GanttChartView(requireContext())
+        ganttContainer.addView(ganttChartView, FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.MATCH_PARENT,
+            FrameLayout.LayoutParams.MATCH_PARENT
+        ))
+
         // LiveData監視
         viewModel.rules.observe(viewLifecycleOwner) { rules ->
             adapter.submitList(rules)
+            // ガントチャートにも反映
+            ganttChartView.setRules(rules)
             // デバッグ用ログ
             println("Rules updated: ${rules.size} items")
         }
