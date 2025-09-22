@@ -15,6 +15,7 @@ class RuleListAdapter(
     interface OnRuleActionListener {
         fun onEditRule(rule: Rule)
         fun onDeleteRule(rule: Rule)
+        fun onSelectLocation(position: Int) // 追加: 位置選択コールバック
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RuleViewHolder {
@@ -23,7 +24,12 @@ class RuleListAdapter(
     }
 
     override fun onBindViewHolder(holder: RuleViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        val rule = getItem(position)
+        holder.bind(rule)
+
+        holder.itemView.findViewById<Button>(R.id.buttonSelectLocation)?.setOnClickListener {
+            onRuleActionListener.onSelectLocation(position)
+        }
     }
 
     inner class RuleViewHolder(private val binding: ItemRuleBinding) : RecyclerView.ViewHolder(binding.root) {

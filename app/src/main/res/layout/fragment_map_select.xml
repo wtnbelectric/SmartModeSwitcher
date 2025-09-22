@@ -1,0 +1,26 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <org.osmdroid.views.MapView
+        android:id="@+id/map"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_marginBottom="16dp" />
+
+    <EditText
+        android:id="@+id/editSpotName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="スポット名（例：自宅・会社）"
+        android:minHeight="48dp" />
+
+    <Button
+        android:id="@+id/buttonSelect"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="この場所を選択" />
+</LinearLayout>
+

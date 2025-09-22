@@ -5,8 +5,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProvider
 import com.example.smartmodeswitcher.R
 import com.example.smartmodeswitcher.databinding.FragmentRuleEditBinding
@@ -163,6 +166,24 @@ class RuleEditFragment : Fragment() {
         // キャンセルボタン
         binding.buttonCancel.setOnClickListener {
             requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
+
+        view.findViewById<Button>(R.id.buttonSelectLocation)?.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, MapSelectFragment())
+                .addToBackStack(null)
+                .commit()
+        }
+
+        // 地図選択結果の受け取り
+        parentFragmentManager.setFragmentResultListener("map_select_result", viewLifecycleOwner) { _, bundle ->
+            val spotName = bundle.getString("spot_name")
+            val latitude = bundle.getDouble("latitude")
+            val longitude = bundle.getDouble("longitude")
+            // UIに反映（例: EditTextやTextViewにセット）
+            view.findViewById<EditText>(R.id.editLatitude)?.setText(latitude.toString())
+            view.findViewById<EditText>(R.id.editLongitude)?.setText(longitude.toString())
+            view.findViewById<EditText>(R.id.editSpotName)?.setText(spotName)
         }
     }
 
