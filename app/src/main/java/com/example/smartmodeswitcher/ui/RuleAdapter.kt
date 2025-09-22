@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.smartmodeswitcher.R
 import com.example.smartmodeswitcher.data.Rule
+import com.example.smartmodeswitcher.util.convertDayNumberToJapanese
 
 class RuleAdapter : ListAdapter<Rule, RuleAdapter.RuleViewHolder>(RuleDiffCallback()) {
 
@@ -32,7 +33,8 @@ class RuleAdapter : ListAdapter<Rule, RuleAdapter.RuleViewHolder>(RuleDiffCallba
         holder.textStartTime.text = rule.startTime
         holder.textEndTime.text = rule.endTime
         holder.textMode.text = rule.mode.toString()
-        holder.textDays.text = rule.days
+        // 曜日を日本語表記に変換して表示
+        holder.textDays.text = convertDayNumberToJapanese(rule.days)
         holder.switchEnabled.isChecked = rule.enabled
     }
 }
