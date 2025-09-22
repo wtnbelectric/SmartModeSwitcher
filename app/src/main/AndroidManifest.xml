@@ -7,6 +7,12 @@
     <!-- Android 10（API 29）以降でバックグラウンド位置情報を使う場合のみ -->
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -17,6 +23,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SmartModeSwitcher"
         tools:targetApi="31">
+
+        <!-- osmdroidのキャッシュディレクトリ設定（推奨） -->
+        <meta-data android:name="osmdroid.basePath" android:value="osmdroid"/>
+        <meta-data android:name="osmdroid.cachePath" android:value="osmdroid"/>
 
         <receiver android:name=".receiver.GeofenceBroadcastReceiver" android:exported="false"/>
         <activity

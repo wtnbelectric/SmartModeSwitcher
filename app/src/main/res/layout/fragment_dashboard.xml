@@ -31,12 +31,17 @@
     <FrameLayout
         android:id="@+id/ganttChartContainer"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="150dp"
         android:layout_marginTop="24dp"
         android:background="#EEEEEE"
         android:contentDescription="ガントチャート表示エリア" />
 
     <!-- Step5以降でガントチャート等をここに追加 -->
 
-</LinearLayout>
+    <org.osmdroid.views.MapView
+        android:id="@+id/map"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_marginTop="8dp"/>
 
+</LinearLayout>

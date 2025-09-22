@@ -261,6 +261,9 @@ https://developer.android.com/training/location/geofencing
 ### 🗺️ OpenStreetMap(osmdroid) 導入手順
 
 1. **build.gradleに依存関係を追加**
+
+- 実施済み
+
    - `libs.versions.toml` または `build.gradle` の dependencies に以下を追加
    ```groovy
    implementation 'org.osmdroid:osmdroid-android:6.1.16'
@@ -268,6 +271,9 @@ https://developer.android.com/training/location/geofencing
 
 2. **AndroidManifest.xmlに権限と設定を追加**
    ```xml
+
+- 実施済み
+
    <uses-permission android:name="android.permission.INTERNET"/>
    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>

@@ -87,6 +87,12 @@
                 android:layout_height="wrap_content"
                 android:text="削除"
                 android:layout_marginStart="8dp" />
+
+            <Button
+                android:id="@+id/buttonSelectLocation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="地図で選択" />
         </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>
