@@ -44,7 +44,11 @@ class DashboardFragment : Fragment() {
 
         // RecyclerViewとアダプタのセット
         val recyclerView = root.findViewById<RecyclerView>(R.id.recyclerViewRules)
-        val adapter = RuleAdapter()
+        val adapter = RuleAdapter { rule, isEnabled ->
+            // 有効/無効変更時にDBへ反映
+            val updatedRule = rule.copy(enabled = isEnabled)
+            viewModel.updateRule(updatedRule)
+        }
         recyclerView.adapter = adapter
         recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(requireContext())
 

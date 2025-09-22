@@ -12,7 +12,9 @@ import com.example.smartmodeswitcher.R
 import com.example.smartmodeswitcher.data.Rule
 import com.example.smartmodeswitcher.util.convertDayNumberToJapanese
 
-class RuleAdapter : ListAdapter<Rule, RuleAdapter.RuleViewHolder>(RuleDiffCallback()) {
+class RuleAdapter(
+    private val onEnabledChanged: ((Rule, Boolean) -> Unit)? = null
+) : ListAdapter<Rule, RuleAdapter.RuleViewHolder>(RuleDiffCallback()) {
 
     class RuleViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val textStartTime: TextView = view.findViewById(R.id.textStartTime)
@@ -36,6 +38,13 @@ class RuleAdapter : ListAdapter<Rule, RuleAdapter.RuleViewHolder>(RuleDiffCallba
         // 曜日を日本語表記に変換して表示
         holder.textDays.text = convertDayNumberToJapanese(rule.days)
         holder.switchEnabled.isChecked = rule.enabled
+
+        // スイッチのリスナーをセット
+        holder.switchEnabled.setOnCheckedChangeListener(null) // リサイクル時の多重リスナー防止
+        holder.switchEnabled.isChecked = rule.enabled
+        holder.switchEnabled.setOnCheckedChangeListener { _, isChecked ->
+            onEnabledChanged?.invoke(rule, isChecked)
+        }
     }
 }
 

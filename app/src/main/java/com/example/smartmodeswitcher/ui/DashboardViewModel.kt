@@ -19,4 +19,10 @@ class DashboardViewModel(private val repository: RuleRepository) : ViewModel() {
             _rules.postValue(result)
         }
     }
+
+    fun updateRule(rule: Rule) {
+        viewModelScope.launch {
+            repository.update(rule)
+        }
+    }
 }

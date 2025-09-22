@@ -19,6 +19,12 @@ class RuleListViewModel(private val repository: RuleRepository) : ViewModel() {
     fun update(rule: Rule) = viewModelScope.launch {
         repository.update(rule)
     }
+
+    fun updateRule(rule: com.example.smartmodeswitcher.data.Rule) {
+        viewModelScope.launch {
+            repository.update(rule)
+        }
+    }
 }
 
 class RuleListViewModelFactory(private val repository: RuleRepository) : ViewModelProvider.Factory {

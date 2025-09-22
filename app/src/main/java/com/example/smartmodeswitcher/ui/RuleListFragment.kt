@@ -42,10 +42,13 @@ class RuleListFragment : Fragment(), RuleListAdapter.OnRuleActionListener {
         // repositoryの初期化はDIやApplicationクラス経由で行うのが推奨
         
         // Set up RecyclerView
-        adapter = RuleListAdapter(this)
+        val adapter = RuleAdapter { rule, isEnabled ->
+            // 有効/無効変更時にDBへ反映
+            val updatedRule = rule.copy(enabled = isEnabled)
+            viewModel.updateRule(updatedRule)
+        }
         binding.recyclerView.adapter = adapter
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        binding.recyclerView.adapter = adapter
 
         viewModel.allRules.observe(viewLifecycleOwner) { rules ->
             adapter.submitList(rules)
