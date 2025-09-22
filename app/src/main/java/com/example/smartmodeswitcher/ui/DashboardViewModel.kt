@@ -10,6 +10,9 @@ class DashboardViewModel(private val repository: RuleRepository) : ViewModel() {
     private val _rules = MutableLiveData<List<Rule>>()
     val rules: LiveData<List<Rule>> = _rules
 
+    private val _currentActiveRuleId = MutableLiveData<Long?>()
+    val currentActiveRuleId: LiveData<Long?> = _currentActiveRuleId
+
     fun loadRulesForDate(date: LocalDate) {
         // Convert to 1-based index where 1=Sunday, 2=Monday, ..., 7=Saturday
         // to match the days string format (e.g., "1111111" where each digit represents a day from Sunday to Saturday)
@@ -24,5 +27,9 @@ class DashboardViewModel(private val repository: RuleRepository) : ViewModel() {
         viewModelScope.launch {
             repository.update(rule)
         }
+    }
+
+    fun setCurrentActiveRuleId(ruleId: Long?) {
+        _currentActiveRuleId.value = ruleId
     }
 }

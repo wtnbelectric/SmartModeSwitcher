@@ -75,7 +75,6 @@ class DashboardFragment : Fragment() {
         // LiveData監視
         viewModel.rules.observe(viewLifecycleOwner) { rules ->
             adapter.submitList(rules)
-            // ガントチャートにも反映
             ganttChartView.setRules(rules)
             // Geofenceリストの作成
             val geofenceList = createGeofenceList(rules)
@@ -100,6 +99,13 @@ class DashboardFragment : Fragment() {
                     android.util.Log.e("DashboardFragment", "Geofence登録失敗: 位置情報権限なし")
                 }
             }
+        }
+
+        // 現在有効なルールIDの監視（ハイライト用）
+        viewModel.currentActiveRuleId.observe(viewLifecycleOwner) { activeId ->
+            // ここでUIに反映
+            adapter.setActiveRuleId(activeId)
+            ganttChartView.setActiveRuleId(activeId)
         }
 
         // 初期表示時に現在の日付でルールを読み込む
@@ -139,11 +145,8 @@ class DashboardFragment : Fragment() {
      * MainActivityから呼ばれる: ジオフェンスや位置情報イベントで有効になったルールIDを受け取りUIに反映
      */
     fun handleRuleSearchResult(ruleId: Long?) {
-        // 例: 現在有効なルールIDをViewModelやローカル変数にセットし、ガントチャートやリストをハイライト
-        // 必要に応じてadapterやViewModelに通知
-        // ここではログ出力のみ
         android.util.Log.d("DashboardFragment", "handleRuleSearchResult: ruleId=$ruleId")
-        // TODO: UIハイライトや状態更新処理をここに実装
+        viewModel.setCurrentActiveRuleId(ruleId)
     }
 
     /**

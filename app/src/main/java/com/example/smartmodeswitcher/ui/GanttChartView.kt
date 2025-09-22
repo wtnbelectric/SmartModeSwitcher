@@ -18,9 +18,15 @@ class GanttChartView @JvmOverloads constructor(
         color = Color.DKGRAY
         textSize = 32f
     }
+    private var activeRuleId: Long? = null
 
     fun setRules(rules: List<Rule>) {
         this.rules = rules
+        invalidate()
+    }
+
+    fun setActiveRuleId(ruleId: Long?) {
+        activeRuleId = ruleId
         invalidate()
     }
 
@@ -48,6 +54,13 @@ class GanttChartView @JvmOverloads constructor(
                 3 -> Color.parseColor("#F44336") // サイレント: 赤
                 else -> Color.GRAY
             }
+            // ハイライト
+            if (rule.id.toLong() == activeRuleId) {
+                paint.strokeWidth = 12f
+                paint.color = Color.parseColor("#1976D2") // 濃い青
+            } else {
+                paint.strokeWidth = 6f
+            }
             canvas.drawRect(left, top, right, bottom, paint)
 
             // ルール名や時刻を左に表示
@@ -68,4 +81,3 @@ class GanttChartView @JvmOverloads constructor(
         }
     }
 }
-

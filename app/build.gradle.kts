@@ -73,4 +73,8 @@ dependencies {
 
     // Geofencing
     implementation(libs.play.services.location)
+
+    // LocalBroadcastManager
+    implementation(libs.localbroadcastmanager)
+
 }

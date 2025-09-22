@@ -175,8 +175,35 @@ geofencingClient.addGeofences(geofencingRequest, pendingIntent)
 https://developer.android.com/training/location/geofencing
 
 ### Step 3. イベントハンドリング
-- ENTER → 場所ルールを適用（モード切替）  
-- EXIT → ベースの時間帯ルールにリセット  
+
+#### 実装方法
+
+1. **BroadcastReceiverでGeofenceイベントを受信**
+   - `GeofenceBroadcastReceiver` の `onReceive` で ENTER/EXIT を判定
+   - `requestId` から該当ルールIDを取得
+
+2. **イベントをアプリ本体に伝搬**
+
+- 実施済み
+
+   - 例: `IntentService` や `ViewModel`、`Activity` へブロードキャストやシングルトン経由で通知
+
+3. **ルール適用処理**
+
+- 実施済み
+
+   - ENTER: 場所ルールを適用（モード切替など）
+   - EXIT: ベースの時間帯ルールにリセット
+
+4. **UI反映**
+
+- 実施済み
+
+   - `DashboardFragment` などで「現在有効なルール」をハイライト表示
+
+#### サンプルフロー
+
+- `GeofenceBroadcastReceiver` → `MainActivity.onRuleSearchResult(ruleId)` → `DashboardFragment.handleRuleSearchResult(ruleId)` → ViewModel/Adapter/UI更新
 
 ### Step 4. ダッシュボード拡張
 - 「現在の位置に基づく有効ルール」を表示  

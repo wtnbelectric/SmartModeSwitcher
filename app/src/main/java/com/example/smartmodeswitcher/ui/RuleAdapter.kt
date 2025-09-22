@@ -24,6 +24,13 @@ class RuleAdapter(
         val switchEnabled: Switch = view.findViewById(R.id.switchEnabled)
     }
 
+    private var activeRuleId: Long? = null
+
+    fun setActiveRuleId(ruleId: Long?) {
+        activeRuleId = ruleId
+        notifyDataSetChanged()
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RuleViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_rule, parent, false)
@@ -44,6 +51,13 @@ class RuleAdapter(
         holder.switchEnabled.isChecked = rule.enabled
         holder.switchEnabled.setOnCheckedChangeListener { _, isChecked ->
             onEnabledChanged?.invoke(rule, isChecked)
+        }
+
+        // ハイライト
+        if (rule.id.toLong() == activeRuleId) {
+            holder.itemView.setBackgroundColor(0xFFE3F2FD.toInt()) // 薄い青
+        } else {
+            holder.itemView.setBackgroundColor(0x00000000) // 透明
         }
     }
 }

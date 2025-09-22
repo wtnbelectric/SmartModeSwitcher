@@ -1,6 +1,10 @@
 package com.example.smartmodeswitcher
 
 import android.Manifest
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -14,6 +18,7 @@ import androidx.fragment.app.commit
 import com.example.smartmodeswitcher.ui.RuleListFragment
 import com.google.android.gms.location.GeofencingClient
 import com.google.android.gms.location.LocationServices
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 
 class MainActivity : AppCompatActivity() {
     private val REQUEST_CODE_LOCATION = 1001
@@ -25,6 +30,18 @@ class MainActivity : AppCompatActivity() {
     )
 
     private lateinit var geofencingClient: GeofencingClient
+
+    private val geofenceEventReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent?.action == "com.example.smartmodeswitcher.GEOFENCE_EVENT") {
+                val transition = intent.getStringExtra("transition")
+                val ruleIds = intent.getStringArrayListExtra("rule_ids")
+                // ここでは最初のIDのみをonRuleSearchResultに渡す例
+                val firstRuleId = ruleIds?.firstOrNull()?.removePrefix("rule_")?.toLongOrNull()
+                onRuleSearchResult(firstRuleId)
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,6 +80,19 @@ class MainActivity : AppCompatActivity() {
                 .setPositiveButton("OK", null)
                 .show()
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+            geofenceEventReceiver,
+            IntentFilter("com.example.smartmodeswitcher.GEOFENCE_EVENT")
+        )
+    }
+
+    override fun onStop() {
+        super.onStop()
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(geofenceEventReceiver)
     }
 
     // ジオフェンスや位置情報イベントを受け取った場合のハンドリング例

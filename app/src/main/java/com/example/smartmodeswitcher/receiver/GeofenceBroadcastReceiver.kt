@@ -6,6 +6,7 @@ import android.content.Intent
 import android.util.Log
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofencingEvent
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 
 class GeofenceBroadcastReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
@@ -26,6 +27,11 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
         }
         val triggeredIds = event.triggeringGeofences?.map { it.requestId } ?: emptyList()
         Log.d("GeofenceReceiver", "Geofence event: $transitionStr, ids=$triggeredIds")
-        // TODO: ここでViewModelやService等にイベントを伝搬し、ルール適用処理を呼び出す
+
+        // --- ここからアプリ本体へ伝搬 ---
+        val broadcastIntent = Intent("com.example.smartmodeswitcher.GEOFENCE_EVENT")
+        broadcastIntent.putExtra("transition", transitionStr)
+        broadcastIntent.putStringArrayListExtra("rule_ids", ArrayList(triggeredIds))
+        LocalBroadcastManager.getInstance(context).sendBroadcast(broadcastIntent)
     }
 }
