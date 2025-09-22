@@ -1,5 +1,9 @@
 # 🚦 フェーズ3 開発仕様 & 開発順序ガイドライン
 
+> **このドキュメントはフェーズ3（ジオフェンス・位置情報連動）の実装ガイドです。  
+> 各Stepごとに「権限対応→Geofence導入→イベントハンドリング→ダッシュボード拡張→テスト」の順で進めてください。  
+> 実装時は既存の時間帯ルールとの連携・優先順位ロジックに注意してください。**
+
 ## 🎯 フェーズ3の目的
 - 登録済みの位置情報（緯度・経度・半径）を利用して **ジオフェンス判定を有効化**  
 - 「時間帯ルールをベース」とし、「場所ルールで上書き」する挙動を実現する  
@@ -50,8 +54,52 @@
 ## 開発順序（フェーズ3）
 
 ### Step 1. 権限対応
-- `ACCESS_FINE_LOCATION` / `ACCESS_COARSE_LOCATION`  
-- Android 10+ → `ACCESS_BACKGROUND_LOCATION`  
+
+#### 1. 必要な権限をAndroidManifest.xmlに追加
+
+- 実施済み
+
+#### 2. 権限リクエスト処理（Activity/Fragment）
+
+- FINE/COARSEは通常のランタイムパーミッションとしてリクエスト
+- BACKGROUNDはAndroid 10+ の場合のみ追加でリクエスト
+
+##### Kotlin例（Activity/Fragmentで実装）
+
+```kotlin
+private val locationPermissions = arrayOf(
+    Manifest.permission.ACCESS_FINE_LOCATION,
+    Manifest.permission.ACCESS_COARSE_LOCATION
+)
+
+private fun checkAndRequestLocationPermissions() {
+    val missing = locationPermissions.filter {
+        ContextCompat.checkSelfPermission(requireContext(), it) != PackageManager.PERMISSION_GRANTED
+    }
+    if (missing.isNotEmpty()) {
+        requestPermissions(missing.toTypedArray(), REQUEST_CODE_LOCATION)
+    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        // Android 10+ の場合、バックグラウンドも追加でリクエスト
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+            != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(arrayOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION), REQUEST_CODE_LOCATION_BG)
+        }
+    }
+}
+```
+
+#### 3. 権限結果のハンドリング
+
+```kotlin
+override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    // 必要に応じて権限取得後の処理を実装
+}
+```
+
+#### 4. ユーザーへの説明
+
+- 権限が拒否された場合は、ダイアログ等で理由を説明し再リクエストを促す
 
 ### Step 2. Geofence導入
 - `GeofencingClient` を利用  
@@ -76,4 +124,4 @@
 ## ✅ フェーズ3終了後にできること
 - 登録した位置情報エリアに入ると自動でモードが切替  
 - エリアを出るとベースの時間帯ルールにリセット  
-- ダッシュボード上で「現在有効なルール」を直感的に確認可能  
+- ダッシュボード上で「現在有効なルール」を直感的に確認可能
