@@ -12,6 +12,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.commit
 import com.example.smartmodeswitcher.ui.RuleListFragment
+import com.google.android.gms.location.GeofencingClient
+import com.google.android.gms.location.LocationServices
 
 class MainActivity : AppCompatActivity() {
     private val REQUEST_CODE_LOCATION = 1001
@@ -22,6 +24,8 @@ class MainActivity : AppCompatActivity() {
         Manifest.permission.ACCESS_COARSE_LOCATION
     )
 
+    private lateinit var geofencingClient: GeofencingClient
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -30,6 +34,7 @@ class MainActivity : AppCompatActivity() {
                 .replace(R.id.fragment_container, RuleListFragment())
                 .commit()
         }
+        geofencingClient = LocationServices.getGeofencingClient(this)
         checkAndRequestLocationPermissions()
     }
 

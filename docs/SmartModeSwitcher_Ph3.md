@@ -103,12 +103,76 @@ override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out
 
 #### 4. ユーザーへの説明
 
+- 実施済み
+
 - 権限が拒否された場合は、ダイアログ等で理由を説明し再リクエストを促す
 
 ### Step 2. Geofence導入
-- `GeofencingClient` を利用  
-- ルールごとに座標＋半径を登録  
-- `BroadcastReceiver` で ENTER / EXIT イベントを受信  
+
+#### 1. GeofencingClientの初期化
+
+- 実施済み
+
+```kotlin
+val geofencingClient = LocationServices.getGeofencingClient(context)
+```
+
+#### 2. Geofenceリストの作成
+
+- 実施済み
+
+```kotlin
+val geofence = Geofence.Builder()
+    .setRequestId("rule_${rule.id}")
+    .setCircularRegion(rule.latitude, rule.longitude, rule.radius)
+    .setExpirationDuration(Geofence.NEVER_EXPIRE)
+    .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER or Geofence.GEOFENCE_TRANSITION_EXIT)
+    .build()
+```
+
+#### 3. GeofencingRequestの作成
+
+- 実施済み
+
+```kotlin
+val geofencingRequest = GeofencingRequest.Builder()
+    .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
+    .addGeofence(geofence)
+    .build()
+```
+
+#### 4. PendingIntentの用意
+
+- 実施済み
+
+```kotlin
+val intent = Intent(context, GeofenceBroadcastReceiver::class.java)
+val pendingIntent = PendingIntent.getBroadcast(
+    context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+)
+```
+
+#### 5. Geofenceの登録
+
+- 実施済み
+
+```kotlin
+geofencingClient.addGeofences(geofencingRequest, pendingIntent)
+    .addOnSuccessListener { /* 登録成功 */ }
+    .addOnFailureListener { e -> /* エラー処理 */ }
+```
+
+#### 6. BroadcastReceiverの実装
+
+- 実施済み
+
+- `GeofenceBroadcastReceiver` を作成し、`onReceive` で ENTER/EXIT を判定
+- イベント内容をViewModelやActivityに伝搬
+
+---
+
+**実装例や詳細は公式ドキュメントも参照：**  
+https://developer.android.com/training/location/geofencing
 
 ### Step 3. イベントハンドリング
 - ENTER → 場所ルールを適用（モード切替）  

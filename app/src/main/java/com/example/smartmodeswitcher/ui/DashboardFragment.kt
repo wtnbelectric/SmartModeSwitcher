@@ -1,5 +1,9 @@
 package com.example.smartmodeswitcher.ui
 
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -23,6 +27,13 @@ import java.time.LocalDate
 import android.widget.FrameLayout
 import android.util.TypedValue
 import android.graphics.Color
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.GeofencingClient
+import com.google.android.gms.location.Geofence
+import com.google.android.gms.location.GeofencingRequest
+
+import com.example.smartmodeswitcher.receiver.GeofenceBroadcastReceiver
+import androidx.core.content.ContextCompat
 
 class DashboardFragment : Fragment() {
     private var selectedDate: Long = MaterialDatePicker.todayInUtcMilliseconds()
@@ -34,6 +45,7 @@ class DashboardFragment : Fragment() {
     private val viewModel: DashboardViewModel by viewModels { factory }
 
     private lateinit var ganttChartView: GanttChartView
+    private lateinit var geofencingClient: GeofencingClient
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -65,8 +77,29 @@ class DashboardFragment : Fragment() {
             adapter.submitList(rules)
             // ガントチャートにも反映
             ganttChartView.setRules(rules)
-            // デバッグ用ログ
-            println("Rules updated: ${rules.size} items")
+            // Geofenceリストの作成
+            val geofenceList = createGeofenceList(rules)
+            android.util.Log.d("DashboardFragment", "Geofenceリスト作成: ${geofenceList.size}件")
+
+            // Geofence登録
+            if (geofenceList.isNotEmpty()) {
+                val geofencingRequest = createGeofencingRequest(geofenceList)
+                val pendingIntent = getGeofencePendingIntent()
+                // パーミッションチェック
+                if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_FINE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED
+                ) {
+                    geofencingClient.addGeofences(geofencingRequest, pendingIntent)
+                        .addOnSuccessListener {
+                            android.util.Log.d("DashboardFragment", "Geofence登録成功")
+                        }
+                        .addOnFailureListener { e ->
+                            android.util.Log.e("DashboardFragment", "Geofence登録失敗: ${e.message}")
+                        }
+                } else {
+                    android.util.Log.e("DashboardFragment", "Geofence登録失敗: 位置情報権限なし")
+                }
+            }
         }
 
         // 初期表示時に現在の日付でルールを読み込む
@@ -92,6 +125,8 @@ class DashboardFragment : Fragment() {
             picker.show(parentFragmentManager, "date_picker")
         }
 
+        geofencingClient = LocationServices.getGeofencingClient(requireContext())
+
         return root
     }
 
@@ -109,5 +144,48 @@ class DashboardFragment : Fragment() {
         // ここではログ出力のみ
         android.util.Log.d("DashboardFragment", "handleRuleSearchResult: ruleId=$ruleId")
         // TODO: UIハイライトや状態更新処理をここに実装
+    }
+
+    /**
+     * 位置情報付きルールからGeofenceリストを作成
+     */
+    private fun createGeofenceList(rules: List<com.example.smartmodeswitcher.data.Rule>): List<Geofence> {
+        return rules.filter { it.latitude != null && it.longitude != null && it.radius != null }
+            .map { rule ->
+                Geofence.Builder()
+                    .setRequestId("rule_${rule.id}")
+                    .setCircularRegion(
+                        rule.latitude!!,
+                        rule.longitude!!,
+                        rule.radius!!.toFloat()
+                    )
+                    .setExpirationDuration(Geofence.NEVER_EXPIRE)
+                    .setTransitionTypes(
+                        Geofence.GEOFENCE_TRANSITION_ENTER or Geofence.GEOFENCE_TRANSITION_EXIT
+                    )
+                    .build()
+            }
+    }
+
+    /**
+     * GeofenceリストからGeofencingRequestを作成
+     */
+    private fun createGeofencingRequest(geofenceList: List<Geofence>): GeofencingRequest {
+        return GeofencingRequest.Builder()
+            .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
+            .apply {
+                geofenceList.forEach { addGeofence(it) }
+            }
+            .build()
+    }
+
+    private fun getGeofencePendingIntent(): PendingIntent {
+        val intent = Intent(requireContext(), GeofenceBroadcastReceiver::class.java)
+        return PendingIntent.getBroadcast(
+            requireContext(),
+            0,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
     }
 }

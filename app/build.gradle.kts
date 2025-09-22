@@ -70,4 +70,7 @@ dependencies {
 
     // Fragment
     implementation(libs.androidx.fragment.ktx)
+
+    // Geofencing
+    implementation(libs.play.services.location)
 }
