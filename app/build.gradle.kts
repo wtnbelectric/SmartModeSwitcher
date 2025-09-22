@@ -77,4 +77,7 @@ dependencies {
     // LocalBroadcastManager
     implementation(libs.localbroadcastmanager)
 
+    // OSMDroid
+    implementation(libs.osmdroid)
+
 }

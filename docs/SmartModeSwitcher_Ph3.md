@@ -229,3 +229,103 @@ https://developer.android.com/training/location/geofencing
 - 登録した位置情報エリアに入ると自動でモードが切替  
 - エリアを出るとベースの時間帯ルールにリセット  
 - ダッシュボード上で「現在有効なルール」を直感的に確認可能
+
+---
+
+## 🗺️ 新機能要望：地図からスポット選択・座標取得による場所設定
+
+- ルール作成・編集時に「地図から場所を選択」できるUIを追加する
+- Google Maps等の地図上でピンをタップ、または長押しで座標（緯度・経度）を取得し、ルールに反映
+- 既存の緯度・経度入力欄と連動し、地図で選択した値が自動で反映される
+- 既存スポット（例：自宅・会社）をリストから選ぶ方式も検討
+
+---
+
+### 🛠️ 実装方法（案）
+
+1. **Google Maps APIの導入**
+   - `build.gradle`に`maps`依存を追加し、APIキーを取得・設定
+2. **地図選択用Fragment/Activityの作成**
+   - ルール編集画面から「地図で選択」ボタンを設置
+   - ボタン押下で地図画面（MapSelectFragmentなど）を起動
+3. **地図上でピン設置・座標取得**
+   - 地図をタップまたは長押しでピンを表示し、緯度・経度を取得
+   - 決定ボタンで選択座標をルール編集画面に返す（FragmentResultやIntentで値渡し）
+   - **スポットを選択した場合は、そのスポットの「名前」と「座標（緯度・経度）」をセットで登録する**
+4. **ルール編集画面で値を反映**
+   - 受け取った座標とスポット名を緯度・経度欄・スポット名欄に自動入力
+   - 必要に応じて半径も地図上で指定できるUIを追加
+
+---
+
+### 🗺️ OpenStreetMap(osmdroid) 導入手順
+
+1. **build.gradleに依存関係を追加**
+   - `libs.versions.toml` または `build.gradle` の dependencies に以下を追加
+   ```groovy
+   implementation 'org.osmdroid:osmdroid-android:6.1.16'
+   ```
+
+2. **AndroidManifest.xmlに権限と設定を追加**
+   ```xml
+   <uses-permission android:name="android.permission.INTERNET"/>
+   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+   <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+   <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+   <application>
+       <!-- osmdroidのキャッシュディレクトリ設定（推奨） -->
+       <meta-data android:name="osmdroid.basePath" android:value="osmdroid"/>
+       <meta-data android:name="osmdroid.cachePath" android:value="osmdroid"/>
+       <!-- ... -->
+   </application>
+   ```
+
+3. **地図表示用のMapViewをレイアウトに追加**
+   - 例:
+   ```xml
+   <org.osmdroid.views.MapView
+       android:id="@+id/map"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"/>
+   ```
+
+4. **Activity/FragmentでMapViewを初期化**
+   - サンプルKotlinコード
+   ```kotlin
+   import org.osmdroid.config.Configuration
+   import org.osmdroid.views.MapView
+
+   override fun onCreate(savedInstanceState: Bundle?) {
+       super.onCreate(savedInstanceState)
+       Configuration.getInstance().load(applicationContext, PreferenceManager.getDefaultSharedPreferences(applicationContext))
+       setContentView(R.layout.your_layout)
+       val map = findViewById<MapView>(R.id.map)
+       map.setMultiTouchControls(true)
+       // 必要に応じて初期位置やズームを設定
+   }
+   ```
+
+---
+
+## 🗺️ 地図APIについて
+
+Google Maps Platformは商用・長期利用では無料枠に制限がありますが、  
+**完全無料の地図APIはAndroid公式では存在しません。**
+
+### 主な選択肢
+
+- **Google Maps Platform**  
+  - 月200ドル分まで無料枠あり（超過は課金）
+  - Android公式サポート・ドキュメントが豊富
+
+- **OpenStreetMap + サードパーティライブラリ**
+  - [osmdroid](https://github.com/osmdroid/osmdroid)（Android用のOpenStreetMap表示ライブラリ、無料・APIキー不要）
+  - [Mapsforge](https://github.com/mapsforge/mapsforge) など
+  - 商用利用やカスタマイズも可能だが、公式サポートや機能はGoogle Mapsより限定的
+
+### 注意点
+
+- 完全無料で使いたい場合は **osmdroid** などOpenStreetMap系ライブラリを検討
+- ただし、地図の見た目や機能（ピン設置、ジオコーディング等）はGoogle Mapsより劣る場合がある
+- ジオフェンスや位置情報API自体はGoogle Play Services依存なので、地図表示だけをOpenStreetMapにすることは可能
