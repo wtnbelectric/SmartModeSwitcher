@@ -106,37 +106,52 @@
         android:id="@+id/editLatitude"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
         android:hint="緯度（例: 35.6895）"
         android:inputType="numberDecimal"
         android:maxLines="1"
-        app:layout_constraintTop_toBottomOf="@id/textViewLocationLabel"
-        app:layout_constraintStart_toStartOf="parent"
+        android:minHeight="48dp"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="4dp"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textViewLocationLabel" />
 
     <EditText
         android:id="@+id/editLongitude"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
         android:hint="経度（例: 139.6917）"
         android:inputType="numberDecimal"
         android:maxLines="1"
-        app:layout_constraintTop_toBottomOf="@id/editLatitude"
-        app:layout_constraintStart_toStartOf="parent"
+        android:minHeight="48dp"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="4dp"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/editLatitude" />
 
     <EditText
         android:id="@+id/editRadius"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
         android:hint="半径（m, 例: 100）"
         android:inputType="number"
         android:maxLines="1"
-        app:layout_constraintTop_toBottomOf="@id/editLongitude"
-        app:layout_constraintStart_toStartOf="parent"
+        android:minHeight="48dp"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="4dp"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/editLongitude" />
+
+    <!-- スポット名入力欄 -->
+    <EditText
+        android:id="@+id/editSpotName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="スポット名"
+        android:minHeight="48dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/editRadius"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <TextView
         android:id="@+id/textViewModeLabel"
@@ -145,7 +160,7 @@
         android:text="モード"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/editRadius"
+        app:layout_constraintTop_toBottomOf="@id/editSpotName"
         android:layout_marginTop="16dp"/>
 
     <RadioGroup

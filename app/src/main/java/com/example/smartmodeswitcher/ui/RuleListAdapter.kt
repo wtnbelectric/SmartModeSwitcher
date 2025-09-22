@@ -27,22 +27,21 @@ class RuleListAdapter(
         val rule = getItem(position)
         holder.bind(rule)
 
-        holder.itemView.findViewById<Button>(R.id.buttonSelectLocation)?.setOnClickListener {
+        holder.binding.buttonSelectLocation.setOnClickListener {
             onRuleActionListener.onSelectLocation(position)
         }
     }
 
-    inner class RuleViewHolder(private val binding: ItemRuleBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class RuleViewHolder(val binding: ItemRuleBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
             binding.buttonEdit.setOnClickListener {
-                val position = adapterPosition
+                val position = bindingAdapterPosition
                 if (position != RecyclerView.NO_POSITION) {
                     onRuleActionListener.onEditRule(getItem(position))
                 }
             }
-            
             binding.buttonDelete.setOnClickListener {
-                val position = adapterPosition
+                val position = bindingAdapterPosition
                 if (position != RecyclerView.NO_POSITION) {
                     onRuleActionListener.onDeleteRule(getItem(position))
                 }
@@ -58,13 +57,13 @@ class RuleListAdapter(
                 else -> "不明"
             }
             binding.switchEnabled.isChecked = rule.enabled
-            // 編集・削除ボタンのリスナーもここで設定
 
             val daysMap = listOf("日", "月", "火", "水", "木", "金", "土")
             val daysStr = rule.days
                 .mapIndexedNotNull { i: Int, c: Char -> if (c == '1') daysMap[i] else null }
                 .joinToString("")
             binding.textDays.text = if (daysStr.isNotEmpty()) daysStr else "指定なし"
+            binding.textSpotName.text = rule.spotName ?: ""
         }
     }
 

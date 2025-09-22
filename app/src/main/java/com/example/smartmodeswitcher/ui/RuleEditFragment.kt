@@ -84,6 +84,8 @@ class RuleEditFragment : Fragment() {
                     binding.editLatitude.setText(rule.latitude?.toString())
                     binding.editLongitude.setText(rule.longitude?.toString())
                     binding.editRadius.setText(rule.radius?.toString())
+                    // スポット名
+                    binding.editSpotName.setText(rule.spotName ?: "")
                 }
             }
         }
@@ -139,6 +141,9 @@ class RuleEditFragment : Fragment() {
             val radius = radiusText.takeIf { it.isNotEmpty() }?.toIntOrNull()
             val dayOfWeek = days.indexOf('1') // 例: "0100000"なら1（＝月曜）
 
+            // スポット名取得
+            val spotName = binding.editSpotName.text.toString().trim()
+
             val rule = Rule(
                 id = editingRuleId ?: 0,
                 startTime = String.format("%02d:%02d", startHour, startMinute),
@@ -148,7 +153,8 @@ class RuleEditFragment : Fragment() {
                 latitude = latitude,
                 longitude = longitude,
                 radius = radius,
-                dayOfWeek = dayOfWeek
+                dayOfWeek = dayOfWeek,
+                spotName = spotName // 追加
             )
             if (editingRuleId != null) {
                 ruleListViewModel.update(rule)
@@ -180,10 +186,10 @@ class RuleEditFragment : Fragment() {
             val spotName = bundle.getString("spot_name")
             val latitude = bundle.getDouble("latitude")
             val longitude = bundle.getDouble("longitude")
-            // UIに反映（例: EditTextやTextViewにセット）
-            view.findViewById<EditText>(R.id.editLatitude)?.setText(latitude.toString())
-            view.findViewById<EditText>(R.id.editLongitude)?.setText(longitude.toString())
-            view.findViewById<EditText>(R.id.editSpotName)?.setText(spotName)
+            // UIに反映
+            binding.editLatitude.setText(latitude.toString())
+            binding.editLongitude.setText(longitude.toString())
+            binding.editSpotName.setText(spotName ?: "")
         }
     }
 

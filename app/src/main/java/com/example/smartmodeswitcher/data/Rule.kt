@@ -14,5 +14,6 @@ data class Rule(
     val longitude: Double? = null,
     val radius: Int? = null,
     val mode: Int,
-    val days: String = "1111111" // 曜日管理（フェーズ1で追加済み想定）
+    val days: String = "1111111", // 曜日管理（フェーズ1で追加済み想定）
+    val spotName: String? = null // 追加
 )

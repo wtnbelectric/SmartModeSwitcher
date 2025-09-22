@@ -92,4 +92,13 @@ class RuleListFragment : Fragment(), RuleListAdapter.OnRuleActionListener {
     override fun onDeleteRule(rule: Rule) {
         viewModel.delete(rule)
     }
+
+    override fun onSelectLocation(position: Int) {
+        // 必要ならここで地図選択画面への遷移などを実装
+        // 例:
+        // parentFragmentManager.beginTransaction()
+        //     .replace(R.id.fragment_container, MapSelectFragment())
+        //     .addToBackStack(null)
+        //     .commit()
+    }
 }
