@@ -18,6 +18,6 @@ interface RuleDao {
     suspend fun delete(rule: Rule)
 
     // RuleDao.kt
-    @Query("SELECT * FROM rules WHERE dayOfWeek = :dayOfWeek")
+    @Query("SELECT * FROM rules WHERE enabled = 1 AND SUBSTR(days, :dayOfWeek, 1) = '1'")
     suspend fun getRulesByDayOfWeek(dayOfWeek: Int): List<Rule>
 }

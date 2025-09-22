@@ -19,6 +19,7 @@ import java.time.Instant
 import java.time.ZoneId
 import com.example.smartmodeswitcher.ui.DashboardViewModel
 import com.example.smartmodeswitcher.ui.RuleAdapter
+import java.time.LocalDate
 
 class DashboardFragment : Fragment() {
     private var selectedDate: Long = MaterialDatePicker.todayInUtcMilliseconds()
@@ -38,13 +39,21 @@ class DashboardFragment : Fragment() {
 
         // RecyclerViewとアダプタのセット
         val recyclerView = root.findViewById<RecyclerView>(R.id.recyclerViewRules)
-        val adapter = RuleAdapter(emptyList())
+        val adapter = RuleAdapter()
         recyclerView.adapter = adapter
+        recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(requireContext())
 
-        // 1. LiveData監視
+        // LiveData監視
         viewModel.rules.observe(viewLifecycleOwner) { rules ->
             adapter.submitList(rules)
+            // デバッグ用ログ
+            println("Rules updated: ${rules.size} items")
         }
+
+        // 初期表示時に現在の日付でルールを読み込む
+        val currentDate = LocalDate.now()
+        textSelectedDate.text = formatDate(selectedDate)
+        viewModel.loadRulesForDate(currentDate)
 
         // 2. 日付選択ボタンのリスナー
         buttonPickDate.setOnClickListener {

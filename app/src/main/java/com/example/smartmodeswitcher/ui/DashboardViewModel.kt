@@ -11,7 +11,9 @@ class DashboardViewModel(private val repository: RuleRepository) : ViewModel() {
     val rules: LiveData<List<Rule>> = _rules
 
     fun loadRulesForDate(date: LocalDate) {
-        val dayOfWeek = date.dayOfWeek.value % 7 // 日曜=0, 月曜=1...
+        // Convert to 1-based index where 1=Sunday, 2=Monday, ..., 7=Saturday
+        // to match the days string format (e.g., "1111111" where each digit represents a day from Sunday to Saturday)
+        val dayOfWeek = if (date.dayOfWeek.value == 7) 1 else date.dayOfWeek.value + 1
         viewModelScope.launch {
             val result = repository.getRulesByDayOfWeek(dayOfWeek)
             _rules.postValue(result)

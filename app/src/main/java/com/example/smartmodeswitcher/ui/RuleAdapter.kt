@@ -5,13 +5,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Switch
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.smartmodeswitcher.R
 import com.example.smartmodeswitcher.data.Rule
 
-class RuleAdapter(
-    private var rules: List<Rule>
-) : RecyclerView.Adapter<RuleAdapter.RuleViewHolder>() {
+class RuleAdapter : ListAdapter<Rule, RuleAdapter.RuleViewHolder>(RuleDiffCallback()) {
 
     class RuleViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val textStartTime: TextView = view.findViewById(R.id.textStartTime)
@@ -28,18 +28,21 @@ class RuleAdapter(
     }
 
     override fun onBindViewHolder(holder: RuleViewHolder, position: Int) {
-        val rule = rules[position]
+        val rule = getItem(position)
         holder.textStartTime.text = rule.startTime
         holder.textEndTime.text = rule.endTime
         holder.textMode.text = rule.mode.toString()
         holder.textDays.text = rule.days
         holder.switchEnabled.isChecked = rule.enabled
     }
+}
 
-    override fun getItemCount(): Int = rules.size
+class RuleDiffCallback : DiffUtil.ItemCallback<Rule>() {
+    override fun areItemsTheSame(oldItem: Rule, newItem: Rule): Boolean {
+        return oldItem.id == newItem.id
+    }
 
-    fun submitList(newRules: List<Rule>) {
-        rules = newRules
-        notifyDataSetChanged()
+    override fun areContentsTheSame(oldItem: Rule, newItem: Rule): Boolean {
+        return oldItem == newItem
     }
 }
