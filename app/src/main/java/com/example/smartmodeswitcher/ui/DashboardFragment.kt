@@ -99,4 +99,15 @@ class DashboardFragment : Fragment() {
         val sdf = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault())
         return sdf.format(Date(millis))
     }
+
+    /**
+     * MainActivityから呼ばれる: ジオフェンスや位置情報イベントで有効になったルールIDを受け取りUIに反映
+     */
+    fun handleRuleSearchResult(ruleId: Long?) {
+        // 例: 現在有効なルールIDをViewModelやローカル変数にセットし、ガントチャートやリストをハイライト
+        // 必要に応じてadapterやViewModelに通知
+        // ここではログ出力のみ
+        android.util.Log.d("DashboardFragment", "handleRuleSearchResult: ruleId=$ruleId")
+        // TODO: UIハイライトや状態更新処理をここに実装
+    }
 }

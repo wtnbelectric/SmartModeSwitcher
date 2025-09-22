@@ -66,6 +66,8 @@
 
 ##### Kotlin例（Activity/Fragmentで実装）
 
+- 実施済み
+
 ```kotlin
 private val locationPermissions = arrayOf(
     Manifest.permission.ACCESS_FINE_LOCATION,
@@ -89,6 +91,8 @@ private fun checkAndRequestLocationPermissions() {
 ```
 
 #### 3. 権限結果のハンドリング
+
+- 実施済み
 
 ```kotlin
 override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -118,6 +122,15 @@ override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out
 - エリアに入る/出る時に正しく切替されるか  
 - 競合ルール時に優先順位通りに動作するか  
 - ダッシュボードに正しく反映されるか  
+
+---
+
+## 検索結果のハンドリング方針
+
+- ジオフェンスや位置情報イベントは `BroadcastReceiver` で受信
+- 受信結果は `ViewModel` で状態管理し、`Fragment`（例：DashboardFragment）でUIに反映
+- ActivityからFragmentへはコールバックやViewModel共有で伝搬する
+- UI層では「現在有効なルール」をハイライト表示する
 
 ---
 
